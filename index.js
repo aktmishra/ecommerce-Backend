@@ -19,9 +19,11 @@ server.use(
 
 // routes import
 import productRouter from "./routes/product.route.js";
+import userRouter from "./routes/user.route.js";
 
 // route declaration
 server.use("/api/v1/products", productRouter);
+server.use("/api/v1/user", userRouter);
 
 // DataBase Connection
 connectDB()
