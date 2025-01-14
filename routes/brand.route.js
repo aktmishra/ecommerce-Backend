@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createBrand, fetchBrands } from "../controller/brand.controller";
+import { createBrand, fetchBrands } from "../controller/brand.controller.js";
  
  
 

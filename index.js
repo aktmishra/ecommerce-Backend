@@ -22,12 +22,14 @@ import productRouter from "./routes/product.route.js";
 import userRouter from "./routes/user.route.js";
 import categoryRouter from "./routes/category.route.js";
 import brandRouter from "./routes/brand.route.js";
+import cartRouter from "./routes/cart.route.js";
 
 // route declaration
 server.use("/api/v1/products", productRouter);
 server.use("/api/v1/user", userRouter);
 server.use("/api/v1/category", categoryRouter);
 server.use("/api/v1/brand", brandRouter);
+server.use("/api/v1/cart", cartRouter);
 
 // DataBase Connection
 connectDB()
