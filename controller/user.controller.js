@@ -46,10 +46,7 @@ export const loginUser = async (req, res) => {
       // TODO: We will make addresses independent of login
       const doc = {
         id: user.id,
-        email: user.email,
-        name: user.name,
-        addresses: user.addresses,
-        orders: user.orders,
+        role: user.role      
       };
       res.status(200).json({
         message: "User login successfuly.",

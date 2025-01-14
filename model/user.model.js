@@ -9,7 +9,7 @@ const userSchema = new Schema(
     addresses: { type: [Schema.Types.Mixed] },
     // TODO:  We can make a separate Schema for this
     name: { type: String },
-    orders: { type: [Schema.Types.Mixed] },
+    addresses: { type: [Schema.Types.Mixed] },
   },
   { timestamps: true }
 );

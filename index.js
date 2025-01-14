@@ -23,6 +23,7 @@ import userRouter from "./routes/user.route.js";
 import categoryRouter from "./routes/category.route.js";
 import brandRouter from "./routes/brand.route.js";
 import cartRouter from "./routes/cart.route.js";
+import orderRouter from "./routes/order.route.js";
 
 // route declaration
 server.use("/api/v1/products", productRouter);
@@ -30,6 +31,7 @@ server.use("/api/v1/user", userRouter);
 server.use("/api/v1/category", categoryRouter);
 server.use("/api/v1/brand", brandRouter);
 server.use("/api/v1/cart", cartRouter);
+server.use("/api/v1/order", orderRouter);
 
 // DataBase Connection
 connectDB()
