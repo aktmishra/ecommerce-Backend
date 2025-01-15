@@ -5,15 +5,12 @@ export const fetchCategories = async (req, res) => {
     const categories = await Category.find({}).exec();
 
     // Return the categories in a consistent response structure
-    res.status(200).json({ success: true, data: categories });
-  } catch (err) {
-    console.error("Error fetching categories:", err); // Log the error for debugging
+    res.status(200).json({ message:"category fetched successfuly", success: true, data: categories });
+  } catch (error) {
+    console.error("Error fetching categories:", error); // Log the error for debugging
     res
       .status(500)
-      .json({
-        error: "An error occurred while fetching categories",
-        message: false,
-      });
+      .json({ message: error.message, success: false });
   }
 };
 export const createCategory = async (req, res) => {
@@ -22,7 +19,7 @@ export const createCategory = async (req, res) => {
   if (!(value || label)) {
     return res
       .status(400)
-      .json({ error: "Category value and label is required" });
+      .json({ message: "Category value and label is required", success:false });
   }
 
   const category = new Category(req.body);
@@ -37,13 +34,10 @@ export const createCategory = async (req, res) => {
         success: true,
         data: doc,
       });
-  } catch (err) {
-    console.error("Error creating category:", err); // Log the error for debugging
+  } catch (error) {
+    console.error("Error creating category:", error); // Log the error for debugging
     res
       .status(500)
-      .json({
-        message: "An error occurred while creating the category",
-        success: false,
-      });
+      .json({ message: error.message, success: false });
   }
 };

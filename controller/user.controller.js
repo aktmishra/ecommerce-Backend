@@ -18,21 +18,23 @@ export const createUser = async (req, res) => {
     res.status(201).json({
       message: "User created successfuly.",
       success: true,
-      data: doc,
+      data: {
+        id: user.id,
+        role: user.role      
+      },
     });
-  } catch (err) {
+  } catch (error) {
     console.error("Error creating user:", err); // Log the error for debugging
 
     // Handle validation errors
-    if (err.name === "ValidationError") {
-      return res.status(400).json({ message: err.message, success: false });
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message, success: false });
     }
 
     // Handle other types of errors
-    res.status(500).json({
-      message: "An error occurred while creating the user.",
-      success: false,
-    });
+    res.status(500).json(
+      { message : error.message, success:false },
+    );
   }
 };
 
@@ -56,11 +58,8 @@ export const loginUser = async (req, res) => {
     } else {
       res.status(401).json({ message: "invalid credentials", success: false });
     }
-  } catch (err) {
-    res.status(400).json({
-      message: `An error occurred while login: ${err}`,
-      success: false,
-    });
+  } catch (error) {
+    res.status(400).json({ message : error.message, success:false });
   }
 };
 
@@ -89,11 +88,8 @@ export const fetchUserById = async (req, res) => {
       .status(200)
       .json({ message: "User found successfuly", success: true, data: user });
   } catch (err) {
-    console.error(err); // Log the error for debugging
-    res.status(500).json({
-      message: `An error occurred while fetching the user: ${err}`,
-      success: false,
-    });
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ message : error.message, success:false });
   }
 };
 
@@ -125,11 +121,8 @@ export const updateUser = async (req, res) => {
     res
       .status(200)
       .json({ message: "User updated successfuly", success: true, data: user });
-  } catch (err) {
-    console.error("Error updating user:", err); // Log the error for debugging
-    res.status(400).json({
-      message: err.message,
-      success: false,
-    });
+  } catch (error) {
+    console.error("Error updating user:", error); // Log the error for debugging
+    res.status(400).json({ message : error.message, success:false });
   }
 };

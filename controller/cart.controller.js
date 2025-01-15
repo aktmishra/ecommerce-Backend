@@ -24,14 +24,11 @@ export const fetchCartByUserId = async (req, res) => {
     res.status(200).json({
       message: "Cart items found for this user",
       success: true,
-      cartItems,
+      data: cartItems,
     });
-  } catch (err) {
-    console.error(err); // Log the error for debugging
-    res.status(500).json({
-      message: "An error occurred while fetching cart items",
-      success: false,
-    });
+  } catch (error) {
+    console.error("An error occurred while fetching cart items", error); // Log the error for debugging
+    res.status(500).json({ message: error.message, success: false });
   }
 };
 
@@ -68,13 +65,14 @@ export const addToCart = async (req, res) => {
 
     res
       .status(201)
-      .json({ message: "Added to cart successfuly", success: true, result });
-  } catch (err) {
-    console.error(err); // Log the error for debugging
-    res.status(500).json({
-      message: "An error occurred while adding to the cart",
-      success: false,
-    });
+      .json({
+        message: "Added to cart successfuly",
+        success: true,
+        data: result,
+      });
+  } catch (error) {
+    console.error("An error occurred while adding to the cart", error); // Log the error for debugging
+    res.status(500).json({ message: error.message, success: false });
   }
 };
 
@@ -100,48 +98,49 @@ export const deleteFromCart = async (req, res) => {
     }
 
     // Respond with the deleted document
-    res
-      .status(200)
-      .json({
-        message: "Item deleted successfully from Cart",
-        success: true,
-        deletedItem: doc,
-      });
-  } catch (err) {
-    console.error(err); // Log the error for debugging
-    res
-      .status(500)
-      .json({
-        message: "An error occurred while deleting the cart item",
-        success: false,
-      });
+    res.status(200).json({
+      message: "Item deleted successfully from Cart",
+      success: true,
+      data: doc,
+    });
+  } catch (error) {
+    console.error("An error occurred while deleting the cart item", error); // Log the error for debugging
+    res.status(500).json({ message: error.message, success: false });
   }
 };
 
 export const updateCart = async (req, res) => {
-    const { itemId } = req.params;
-  
-    // Input validation
-    if (!itemId) {
-      return res.status(400).json({ message: 'Item ID is required', success: false });
+  const { itemId } = req.params;
+
+  // Input validation
+  if (!itemId) {
+    return res
+      .status(400)
+      .json({ message: "Item ID is required", success: false });
+  }
+
+  try {
+    // Attempt to find and update the cart item by ID
+    const updatedCart = await Cart.findByIdAndUpdate(itemId, req.body, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure that validators are run on the update
+    });
+
+    // Check if the document was found and updated
+    if (!updatedCart) {
+      return res
+        .status(404)
+        .json({ message: "Cart item not found", success: false });
     }
-  
-    try {
-      // Attempt to find and update the cart item by ID
-      const updatedCart = await Cart.findByIdAndUpdate(itemId, req.body, {
-        new: true, // Return the updated document
-        runValidators: true, // Ensure that validators are run on the update
-      });
-  
-      // Check if the document was found and updated
-      if (!updatedCart) {
-        return res.status(404).json({ message: 'Cart item not found', success: false });
-      }
-  
-      // Respond with the updated cart item
-      res.status(200).json({ message: 'Cart item updated successfully', success: true, updatedCart });
-    } catch (err) {
-      console.error(err); // Log the error for debugging
-      res.status(500).json({ message: 'An error occurred while updating the cart item', success: false });
-    }
-  };
+
+    // Respond with the updated cart item
+    res.status(200).json({
+      message: "Cart item updated successfully",
+      success: true,
+      data: updatedCart,
+    });
+  } catch (error) {
+    console.error("An error occurred while updating the cart item", error); // Log the error for debugging
+    res.status(500).json({ message: error.message, success: false });
+  }
+};

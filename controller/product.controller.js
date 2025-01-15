@@ -6,9 +6,10 @@ export const createProduct = async (req, res) => {
   // console.log(product)
   try {
     const doc = await product.save();
-    res.status(201).json(doc);
+    res.status(201).json({ message: 'Product created', success: true, data:doc});
   } catch (error) {
-    res.status(401).json(error);
+    console.error("Error while creating product:", error)
+    res.status(401).json({ message : error.message, success:false });
   }
 };
 
@@ -20,7 +21,8 @@ export const fetchAllProducts = async (req, res) => {
 
   try {
     // Build the query object
-    const query = {};
+    const query = {deleted:false};
+    
 
     // Filter by category
     if (req.query.category) {
@@ -57,7 +59,7 @@ export const fetchAllProducts = async (req, res) => {
     res.status(200).json(docs);
   } catch (error) {
     console.error(error); // Log the error for debugging
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message : error.message, success:false });
   }
 };
 
@@ -67,22 +69,22 @@ export const fetchProductById = async (req, res) => {
 
     // Validate the ID format
     if (!mongoose.isValidObjectId(id)) {
-      return res.status(400).json({ error: "Invalid product ID format" });
+      return res.status(400).json({ message: "Invalid product ID format", success:false});
     }
 
     const product = await Product.findById(id);
 
     // Check if the product was found
     if (!product) {
-      return res.status(404).json({ error: "Product not found" });
+      return res.status(404).json({ message: "Product not found" , success:false});
     }
 
-    res.status(200).json(product);
+    res.status(200).json({ message: 'Product fetched', success: true, data:product});
   } catch (error) {
     console.error("Error fetching product:", error); // Log the error for debugging
     res
       .status(500)
-      .json({ error: "An error occurred while fetching the product" });
+      .json({ message : error.message, success:false });
   }
 };
 
@@ -103,14 +105,14 @@ export const updateProduct = async (req, res) => {
 
     // Check if the product was found
     if (!product) {
-      return res.status(404).json({ error: "Product not found" });
+      return res.status(404).json({ error: "Product not found", success:false });
     }
 
-    res.status(200).json(product);
+    res.status(200).json({ message: 'Product updated', success: true, data:product});
   } catch (error) {
     console.error("Error updating product:", error); // Log the error for debugging
     res
       .status(500)
-      .json({ error: "An error occurred while updating the product" });
+      .json({ message : error.message, success:false });
   }
 };

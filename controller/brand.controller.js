@@ -6,15 +6,12 @@ export const fetchBrands = async (req, res) => {
     const brands = await Brand.find({}).exec();
 
     // Return the categories in a consistent response structure
-    res.status(200).json({ success: true, data: brands });
-  } catch (err) {
-    console.error("Error fetching brands:", err); // Log the error for debugging
+    res.status(200).json({ message:"Brands fetched successfuly", success: true, data: brands });
+  } catch (error) {
+    console.error("Error fetching brands:", error); // Log the error for debugging
     res
       .status(500)
-      .json({
-        error: "An error occurred while fetching brands",
-        message: false,
-      });
+      .json({ message: error.message, success: false });
   }
 };
 export const createBrand = async (req, res) => {
@@ -23,7 +20,7 @@ export const createBrand = async (req, res) => {
   if (!(value || label)) {
     return res
       .status(400)
-      .json({ error: "Brands value and label is required" });
+      .json({ message: "Brands value and label is required", success:false });
   }
 
   const brand = new Brand(req.body);
@@ -38,13 +35,10 @@ export const createBrand = async (req, res) => {
         success: true,
         data: doc,
       });
-  } catch (err) {
+  } catch (error) {
     console.error("Error creating Brand:", err); // Log the error for debugging
     res
       .status(500)
-      .json({
-        message: "An error occurred while creating the Brand",
-        success: false,
-      });
+      .json({ message: error.message, success: false });
   }
 };

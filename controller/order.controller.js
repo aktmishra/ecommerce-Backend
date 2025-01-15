@@ -23,13 +23,14 @@ export const fetchOrdersByUserId = async (req, res) => {
     // Respond with the found orders
     res
       .status(200)
-      .json({ message: "Orders fetched successfully", success: true, orders });
-  } catch (err) {
-    console.error(err); // Log the error for debugging
-    res.status(500).json({
-      message: "An error occurred while fetching orders",
-      success: false,
-    });
+      .json({
+        message: "Orders fetched successfully",
+        success: true,
+        data: orders,
+      });
+  } catch (error) {
+    console.error("An error occurred while fetching orders", error); // Log the error for debugging
+    res.status(500).json({ message: error.message, success: false });
   }
 };
 
@@ -94,14 +95,11 @@ export const createOrder = async (req, res) => {
     res.status(201).json({
       message: "Order created successfully",
       success: true,
-      order: doc,
+      data: doc,
     });
-  } catch (err) {
-    console.error(err); // Log the error for debugging
-    res.status(500).json({
-      message: "An error occurred while creating the order",
-      success: false,
-    });
+  } catch (error) {
+    console.error("An error occurred while creating the order", error); // Log the error for debugging
+    res.status(500).json({ message: error.message, success: false });
   }
 };
 
@@ -130,41 +128,48 @@ export const deleteOrder = async (req, res) => {
     res.status(200).json({
       message: "Order deleted successfully",
       success: true,
-      deletedOrder: order,
+      data: order,
     });
-  } catch (err) {
-    console.error(err); // Log the error for debugging
-    res.status(500).json({
-      message: "An error occurred while deleting the order",
-      success: false,
-    });
+  } catch (error) {
+    console.error("Error while deleting order:", error); // Log the error for debugging
+    res.status(500).json({ message: error.message, success: false });
   }
 };
 
 export const updateOrder = async (req, res) => {
-    const { orderId } = req.params;
-  
-    // Input validation
-    if (!orderId) {
-      return res.status(400).json({ message: 'Order ID is required', success: false });
+  const { orderId } = req.params;
+
+  // Input validation
+  if (!orderId) {
+    return res
+      .status(400)
+      .json({ message: "Order ID is required", success: false });
+  }
+
+  try {
+    // Attempt to find and update the order by ID
+    const order = await Order.findByIdAndUpdate(orderId, req.body, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure that validators are run on the update
+    });
+
+    // Check if the order was found and updated
+    if (!order) {
+      return res
+        .status(404)
+        .json({ message: "Order not found", success: false });
     }
-  
-    try {
-      // Attempt to find and update the order by ID
-      const order = await Order.findByIdAndUpdate(orderId, req.body, {
-        new: true, // Return the updated document
-        runValidators: true, // Ensure that validators are run on the update
+
+    // Respond with the updated order
+    res
+      .status(200)
+      .json({
+        message: "Order updated successfully",
+        success: true,
+        data: order,
       });
-  
-      // Check if the order was found and updated
-      if (!order) {
-        return res.status(404).json({ message: 'Order not found', success: false });
-      }
-  
-      // Respond with the updated order
-      res.status(200).json({ message: 'Order updated successfully', success: true, order });
-    } catch (err) {
-      console.error(err); // Log the error for debugging
-      res.status(500).json({ message: 'An error occurred while updating the order', success: false });
-    }
-  };
+  } catch (error) {
+    console.error("Error while updating order:", error); // Log the error for debugging
+    res.status(500).json({ message: error.message, success: false });
+  }
+};
