@@ -18,7 +18,7 @@ export const fetchCartByUserId = async (req, res) => {
     if (cartItems.length === 0) {
       return res
         .status(404)
-        .json({ message: "No cart items found for this user", success: false });
+        .json({ message: "No cart items found for this user", success: false, });
     }
 
     res.status(200).json({
@@ -124,7 +124,7 @@ export const updateCart = async (req, res) => {
     const updatedCart = await Cart.findByIdAndUpdate(itemId, req.body, {
       new: true, // Return the updated document
       runValidators: true, // Ensure that validators are run on the update
-    });
+    }).populate("product");
 
     // Check if the document was found and updated
     if (!updatedCart) {

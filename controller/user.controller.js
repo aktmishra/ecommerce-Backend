@@ -24,7 +24,7 @@ export const createUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error creating user:", err); // Log the error for debugging
+    console.error("Error creating user:", error); // Log the error for debugging
 
     // Handle validation errors
     if (error.name === "ValidationError") {
@@ -75,7 +75,7 @@ export const fetchUserById = async (req, res) => {
   }
 
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(id).select("-password");
 
     // Check if user was found
     if (!user) {
@@ -87,7 +87,7 @@ export const fetchUserById = async (req, res) => {
     res
       .status(200)
       .json({ message: "User found successfuly", success: true, data: user });
-  } catch (err) {
+  } catch (error) {
     console.error(error); // Log the error for debugging
     res.status(500).json({ message : error.message, success:false });
   }

@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const orderSchema = new Schema({
   items: { type: [Schema.Types.Mixed], required: true },
   totalAmount: { type: Number, min: 0 },
-  totalItems: { type: Number, min: 0 },
+  totalItem: { type: Number, min: 0 },
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   //TODO:  we can add enum types
   paymentMethod: { type: String, required: true },

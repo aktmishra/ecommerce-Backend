@@ -36,7 +36,7 @@ export const createBrand = async (req, res) => {
         data: doc,
       });
   } catch (error) {
-    console.error("Error creating Brand:", err); // Log the error for debugging
+    console.error("Error creating Brand:", error); // Log the error for debugging
     res
       .status(500)
       .json({ message: error.message, success: false });

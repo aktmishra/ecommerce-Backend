@@ -8,7 +8,7 @@ const router = Router();
 router.route("/create").post(addToCart);
 router.route("/:userId").get(fetchCartByUserId);
 router.route("/:itemId").delete(deleteFromCart);
-router.route("/:itemId").patch(updateCart);
+router.route("/edit/:itemId").patch(updateCart);
  
 
 export default router;

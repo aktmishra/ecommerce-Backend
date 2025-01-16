@@ -39,7 +39,7 @@ export const createOrder = async (req, res) => {
   const {
     items,
     totalAmount,
-    totalItems,
+    totalItem,
     userId,
     paymentMethod,
     shippingAddress,
@@ -57,7 +57,7 @@ export const createOrder = async (req, res) => {
       success: false,
     });
   }
-  if (totalItems < 0) {
+  if (totalItem < 0) {
     return res.status(400).json({
       message: "Total items must be a non-negative number",
       success: false,
@@ -84,7 +84,7 @@ export const createOrder = async (req, res) => {
     const order = new Order({
       items,
       totalAmount,
-      totalItems,
+      totalItem,
       user: userId,
       paymentMethod,
       shippingAddress,
