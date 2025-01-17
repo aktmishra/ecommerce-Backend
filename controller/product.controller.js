@@ -21,9 +21,12 @@ export const fetchAllProducts = async (req, res) => {
 
   try {
     // Build the query object
-    const query = {deleted:false};
+    const query = { };
     
 
+     
+    if (!req.query.admin) {
+      query.deleted = false}
     // Filter by category
     if (req.query.category) {
       query.category = { $in: req.query.category.split(",") }; // Support multiple categories
@@ -56,7 +59,7 @@ export const fetchAllProducts = async (req, res) => {
 
     // Set the total count in the response header
     res.set("X-Total-Count", totalDocs);
-    res.status(200).json(docs);
+    res.status(200).json({ message : "Products Fetched", success:true, data:docs });
   } catch (error) {
     console.error(error); // Log the error for debugging
     res.status(400).json({ message : error.message, success:false });

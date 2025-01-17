@@ -34,6 +34,41 @@ export const fetchOrdersByUserId = async (req, res) => {
   }
 };
 
+export const fetchAllOrder = async (req, res) => {
+ 
+  // sort = {_sort:"price",_order="desc"}
+  // pagination = {_page:1,_limit=10}
+ 
+
+  try {
+
+    let orders = Order.find({})
+    // Sorting
+    if (req.query._sort && req.query._order) {
+      const sortOrder = req.query._order === "desc" ? -1 : 1; // Determine sort order
+      orders = orders.sort({ [req.query._sort]: sortOrder });
+    }
+
+    // Pagination
+    const pageSize = parseInt(req.query._per_page) || 10; // Default to 10 if not provided
+    const page = parseInt(req.query._page) || 1; // Default to page 1 if not provided
+    orders = orders.skip(pageSize * (page - 1)).limit(pageSize);
+
+    // Execute the query
+    const docs = await orders.exec();
+
+    // Get total count of products matching the query
+    const totalDocs = await Order.countDocuments().exec();
+
+    // Set the total count in the response header
+    res.set("X-Total-Count", totalDocs);
+    res.status(200).json({ message : "Orders Fetched", success:true, data:docs });
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(400).json({ message : error.message, success:false });
+  }
+};
+
 export const createOrder = async (req, res) => {
   // Input validation
   const {
