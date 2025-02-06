@@ -1,67 +1,7 @@
 import mongoose from "mongoose";
 import { User } from "../model/user.model.js";
 
-// Auth Related Section
-export const createUser = async (req, res) => {
-  // Validate the request body
-  const { fullName, email, password } = req.body;
-  if (!fullName || !email || !password) {
-    return res.status(400).json({
-      message: "fullName, email, and password are required.",
-      success: false,
-    });
-  }
 
-  const user = new User(req.body);
-  try {
-    const doc = await user.save();
-    res.status(201).json({
-      message: "User created successfuly.",
-      success: true,
-      data: {
-        id: user.id,
-        role: user.role      
-      },
-    });
-  } catch (error) {
-    console.error("Error creating user:", error); // Log the error for debugging
-
-    // Handle validation errors
-    if (error.name === "ValidationError") {
-      return res.status(400).json({ message: error.message, success: false });
-    }
-
-    // Handle other types of errors
-    res.status(500).json(
-      { message : error.message, success:false },
-    );
-  }
-};
-
-export const loginUser = async (req, res) => {
-  try {
-    const user = await User.findOne({ email: req.body.email }).exec();
-    // TODO: this is just temporary, we will use strong password auth
-    if (!user) {
-      res.status(401).json({ message: "no such user email", success: false });
-    } else if (user.password === req.body.password) {
-      // TODO: We will make addresses independent of login
-      const doc = {
-        id: user.id,
-        role: user.role      
-      };
-      res.status(200).json({
-        message: "User login successfuly.",
-        success: true,
-        data: doc,
-      });
-    } else {
-      res.status(401).json({ message: "invalid credentials", success: false });
-    }
-  } catch (error) {
-    res.status(400).json({ message : error.message, success:false });
-  }
-};
 
 // User Related Section
 export const fetchUserById = async (req, res) => {
@@ -75,7 +15,7 @@ export const fetchUserById = async (req, res) => {
   }
 
   try {
-    const user = await User.findById(id).select("-password");
+    const user = await User.findById(id).select("-password -salt");
 
     // Check if user was found
     if (!user) {

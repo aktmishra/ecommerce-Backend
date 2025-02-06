@@ -2,9 +2,10 @@ import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema(
   {
-    fullName: { type: String, required: true, unique: true },
+    fullName: { type: String, required: true},
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: Buffer, required: true },
+    salt: {type:Buffer},
     role: { type: String, required: true, default: "user" },
     addresses: { type: [Schema.Types.Mixed] },
     // TODO:  We can make a separate Schema for this
