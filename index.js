@@ -5,6 +5,7 @@ import connectDB from "./db/index.js";
 import passport from "passport"
 import session  from "express-session"
 import { localStrategy } from "./service/localStrategy.js";
+import Stripe from "stripe";
 
 // routes import
 import productRouter from "./routes/product.route.js";
@@ -24,7 +25,7 @@ dotenv.config({
 });
 
 //  middleware
-server.use(express.raw({type: 'application/json'}));
+// server.use(express.raw({type: 'application/json'}));
 server.use(express.json());
 server.use(
   session({
@@ -58,7 +59,7 @@ localStrategy(passport)
 //  payment integraion
 
 // This is your test secret API key.
-const stripe = require('stripe')('sk_test_51QpkZtEXx25K7ImwHQQHz30gtjmzsZXELSNN22uQ5PnYF7ZMZ5hiwBeBadmZLABfEKBNt7TI9gvK3qg8aoyNWXZ000vFqUNpWU');
+const stripe =  new Stripe('sk_test_51QpkZtEXx25K7ImwHQQHz30gtjmzsZXELSNN22uQ5PnYF7ZMZ5hiwBeBadmZLABfEKBNt7TI9gvK3qg8aoyNWXZ000vFqUNpWU');
 server.post("/create-payment-intent", async (req, res) => {
   const { totalAmount } = req.body;
   // Create a PaymentIntent with the order amount and currency
