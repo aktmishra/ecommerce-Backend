@@ -37,11 +37,20 @@ export const createUser = async (req, res) => {
         }
         const user = new User({ ...req.body, password: hashedPassword, salt });
         const doc = await user.save();
-
-        res.status(201).json({
-          message: "User created successfuly",
-          success: true,
-          data: sanitizeUser(doc),
+        req.login(sanitizeUser(user), function (err) {
+          // this also call serializer and adds to session
+          if (err) {
+            res.status(401).json({
+              message: "Something went wrong",
+              success: flase,
+            });
+          }
+          // session saved
+          res.status(201).json({
+            message: "User created successfuly",
+            success: true,
+            data: sanitizeUser(doc),
+          });
         });
       }
     );
@@ -68,4 +77,8 @@ export const loginUser = async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message, success: false });
   }
+};
+
+export const checkUser = async (req, res) => {
+  res.json(req.user);
 };
