@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { checkUser, createUser, loginUser } from "../controller/auth.controller.js";
+import { checkUser, createUser, loginUser } from "../controller/auth.controller.js";
 import passport from "passport";
  
  

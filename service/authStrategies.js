@@ -85,15 +85,15 @@ export const authStrategies = (passport) => {
     })
   );
 
-  // this creates session variable req.user on being called from callbacks
-  passport.serializeUser(function (user, cb) {
-    console.log("serialize", user);
-    process.nextTick(function () {
-      return cb(null, { id: user.id, role: user.role });
-    });
-  });
+//   // this creates session variable req.user on being called from callbacks
+//   passport.serializeUser(function (user, cb) {
+//     console.log("serialize", user);
+//     process.nextTick(function () {
+//       return cb(null, { id: user.id, role: user.role });
+//     });
+//   });
 
-  // this changes session variable req.user when called from authorized request
+//   // this changes session variable req.user when called from authorized request
 
   passport.deserializeUser(async function (obj, cb) {
     try {
