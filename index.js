@@ -7,6 +7,10 @@ import session from "express-session";
 import { authStrategies } from "./service/authStrategies.js";
 import Stripe from "stripe";
 import cookieParser from "cookie-parser";
+import path from "path"
+import { fileURLToPath } from 'url';
+ 
+
 
 // routes import
 import productRouter from "./routes/product.route.js";
@@ -18,6 +22,10 @@ import cartRouter from "./routes/cart.route.js";
 import orderRouter from "./routes/order.route.js";
 import { isAuth } from "./service/common.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
 dotenv.config({
   path: ".env",
 });
@@ -27,7 +35,7 @@ const server = express();
 
 //  middleware
 // server.use(express.raw({type: 'application/json'}));
-server.use(express.static("dist"))
+server.use(express.static(path.resolve(__dirname, "dist")))
 server.use(express.json());
 server.use(
   session({
