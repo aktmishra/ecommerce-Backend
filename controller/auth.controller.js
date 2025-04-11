@@ -1,9 +1,9 @@
 import { User } from "../model/user.model.js";
 import crypto from "crypto";
 import { sanitizeUser } from "../service/common.js";
-import jwt from "jsonwebtoken"
-import dotenv from "dotenv"
-dotenv.config()
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Auth Related Section
 export const createUser = async (req, res) => {
@@ -41,7 +41,6 @@ export const createUser = async (req, res) => {
         const user = new User({ ...req.body, password: hashedPassword, salt });
         const doc = await user.save();
 
-        
         req.login(sanitizeUser(doc), (err) => {
           //this also call serializer and adds to session
           if (err) {
@@ -51,14 +50,20 @@ export const createUser = async (req, res) => {
             });
           } else {
             //token
-            const token = jwt.sign(sanitizeUser(doc), process.env.JWT_SECRET )
+            const token = jwt.sign(sanitizeUser(doc), process.env.JWT_SECRET);
 
-            res.status(201).json({
-              message: "User created successfuly",
-              success: true,
-              token: token,
-              data: sanitizeUser(doc),
-            });
+            res
+              .cookie("jwt", token, {
+                expires: new Date(Date.now() + 3600000),
+                httpOnly: true,
+              })
+              .status(201)
+              .json({
+                message: "User created successfuly",
+                success: true,
+                // token: token,
+                data: sanitizeUser(doc),
+              });
           }
         });
       }
@@ -78,16 +83,46 @@ export const createUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    res.status(200).json({
-      message: "User Logged In successfuly.",
-      success: true,
-      data: req.user,
-    });
+    res
+      .cookie("jwt", req.user.token, {
+        expires: new Date(Date.now() + 3600000),
+        httpOnly: true,
+      })
+      .status(200)
+      .json({
+        message: "User Logged In successfuly.",
+        success: true,
+        data: req.user,
+      });
+  } catch (error) {
+    res.status(400).json({ message: error.message, success: false });
+  }
+};
+export const logoutUser = async (req, res) => {
+  try {
+    res
+      .cookie("jwt", "")
+      .status(200)
+      .json({
+        message: "User Logged out successfuly.",
+        success: true,
+      });
   } catch (error) {
     res.status(400).json({ message: error.message, success: false });
   }
 };
 
+
+
+
 export const checkUser = (req, res) => {
-  res.json({ status: "success", user: req.user });
+  if (req.user) {
+    res.status(200).json({
+      message: "already logged in",
+      success: true,
+      data: req.user,
+    });
+  }else{
+    res.sendStatus(401)
+  }
 };

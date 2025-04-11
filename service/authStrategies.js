@@ -1,7 +1,7 @@
 import { Strategy } from "passport-local";
 import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 import { User } from "../model/user.model.js";
-import { sanitizeUser } from "./common.js";
+import { cookiesExtractor, sanitizeUser } from "./common.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import dotenv from "dotenv";
@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.jwtFromRequest = cookiesExtractor;
 opts.secretOrKey = process.env.JWT_SECRET;
 
 export const authStrategies = (passport) => {
@@ -53,7 +53,7 @@ export const authStrategies = (passport) => {
             // If the password is correct, sanitize the user object and pass it to the serializer
             done(
               null,
-              { id: user.id, role: user.role, token },
+              { id: user.id, role: user.role,token},
               {
                 message: "Logged In successfuly",
                 success: true,
