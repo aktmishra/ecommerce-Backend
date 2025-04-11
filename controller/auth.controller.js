@@ -1,6 +1,9 @@
 import { User } from "../model/user.model.js";
 import crypto from "crypto";
 import { sanitizeUser } from "../service/common.js";
+import jwt from "jsonwebtoken"
+import dotenv from "dotenv"
+dotenv.config()
 
 // Auth Related Section
 export const createUser = async (req, res) => {
@@ -38,10 +41,25 @@ export const createUser = async (req, res) => {
         const user = new User({ ...req.body, password: hashedPassword, salt });
         const doc = await user.save();
 
-        res.status(201).json({
-          message: "User created successfuly",
-          success: true,
-          data: sanitizeUser(doc),
+        
+        req.login(sanitizeUser(doc), (err) => {
+          //this also call serializer and adds to session
+          if (err) {
+            res.status(400).json({
+              message: "Something went wrong",
+              success: false,
+            });
+          } else {
+            //token
+            const token = jwt.sign(sanitizeUser(doc), process.env.JWT_SECRET )
+
+            res.status(201).json({
+              message: "User created successfuly",
+              success: true,
+              token: token,
+              data: sanitizeUser(doc),
+            });
+          }
         });
       }
     );
@@ -68,4 +86,8 @@ export const loginUser = async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message, success: false });
   }
+};
+
+export const checkUser = (req, res) => {
+  res.json({ status: "success", user: req.user });
 };

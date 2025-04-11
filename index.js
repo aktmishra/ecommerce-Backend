@@ -4,7 +4,7 @@ import cors from "cors";
 import connectDB from "./db/index.js";
 import passport from "passport"
 import session  from "express-session"
-import { localStrategy } from "./service/localStrategy.js";
+import { authStrategies } from "./service/authStrategies.js";
 import Stripe from "stripe";
 
 // routes import
@@ -15,21 +15,22 @@ import categoryRouter from "./routes/category.route.js";
 import brandRouter from "./routes/brand.route.js";
 import cartRouter from "./routes/cart.route.js";
 import orderRouter from "./routes/order.route.js";
+import { isAuth } from "./service/common.js";
  
+dotenv.config({
+  path: ".env",
+});
 
 // server
 const server = express();
 
-dotenv.config({
-  path: ".env",
-});
 
 //  middleware
 // server.use(express.raw({type: 'application/json'}));
 server.use(express.json());
 server.use(
   session({
-    secret: 'keyboard cat',
+    secret: process.env.SESSION_SECRET,
     resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something stored
   })
@@ -44,16 +45,16 @@ server.use(
 
 
 // route declaration
-server.use("/api/v1/products", productRouter);
-server.use("/api/v1/user", userRouter);
+server.use("/api/v1/products",isAuth(), productRouter);
+server.use("/api/v1/user",isAuth(), userRouter);
 server.use("/api/v1/auth", authRouter);
-server.use("/api/v1/category", categoryRouter);
-server.use("/api/v1/brand", brandRouter);
-server.use("/api/v1/cart", cartRouter);
-server.use("/api/v1/order", orderRouter);
+server.use("/api/v1/category",isAuth(), categoryRouter);
+server.use("/api/v1/brand",isAuth(), brandRouter);
+server.use("/api/v1/cart",isAuth(), cartRouter);
+server.use("/api/v1/order",isAuth(), orderRouter);
 
 // passport strategies
-localStrategy(passport)
+authStrategies(passport)
 
 
 //  payment integraion
