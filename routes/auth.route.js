@@ -8,6 +8,6 @@ const router = Router();
 router.route("/signup").post(createUser);
 router.route("/login").post(passport.authenticate("local"), loginUser);
 router.route("/check").get(passport.authenticate("jwt"), checkUser);
-router.route("/logout").get(passport.authenticate("jwt"), logoutUser);
+router.route("/logout").get( logoutUser);
 
 export default router;
