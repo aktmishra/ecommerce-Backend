@@ -98,13 +98,17 @@ export const loginUser = async (req, res) => {
     res.status(400).json({ message: error.message, success: false });
   }
 };
-export const logoutUser = async (req, res) => {
+export const logoutUser  = async (req, res) => {
   try {
     res
-      .cookie("jwt", "")
+      .cookie("jwt", "", {
+        httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+        sameSite: "Strict", // Helps prevent CSRF attacks
+        expires: new Date(0), // Set expiration date to the past
+      })
       .status(200)
       .json({
-        message: "User Logged out successfuly.",
+        message: "User  logged out successfully.",
         success: true,
       });
   } catch (error) {
