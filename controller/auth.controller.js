@@ -101,7 +101,7 @@ export const loginUser = async (req, res) => {
 export const logoutUser  = async (req, res) => {
   try {
     res
-      .cookie("jwt", "", {
+      .cookie("jwt", null, {
         httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
         sameSite: "Strict", // Helps prevent CSRF attacks
         expires: new Date(0), // Set expiration date to the past
