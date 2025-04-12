@@ -62,6 +62,8 @@ server.use("/api/v1/category", isAuth(), categoryRouter);
 server.use("/api/v1/brand", isAuth(), brandRouter);
 server.use("/api/v1/cart", isAuth(), cartRouter);
 server.use("/api/v1/order", isAuth(), orderRouter);
+//this line added to make react router work in case of other routes does not match
+server.get("*", (req, res)=>res.sendFile(path.resolve("dist", "index.html")))
 
 // passport strategies
 authStrategies(passport);
